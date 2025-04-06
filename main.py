@@ -95,9 +95,7 @@ def getImageDescription(file):
 # load images stored in cloud bucket
 # load and parse the json files with title and description
 def loadImagesFromCloudStorage():
-    bucket = 'cot4930-001-bucket'
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket)
+    bucket = getBucket()
     blobs = bucket.list_blobs()
     image_urls = []
     titles = []
