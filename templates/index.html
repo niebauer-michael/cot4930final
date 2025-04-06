@@ -45,7 +45,8 @@
         <div>
             {% for i in range(0, length) %}
                 <div>
-                    <img src="{{ image_urls[i] }}" alt="Image" style="max-width: 500px; margin-bottom: 20px;">
+                   <!--  <img src="{{ image_urls[i] }}" alt="Image" style="max-width: 500px; margin-bottom: 20px;">-->
+                   <img src="{{ image_filename=image_filenames[i]}}" alt="Image" style="width: 300px;" onclick="openImageInNewWindow(this.src)">
                 </div>                
                 <div>
                     <p class="h6">{{titles[i]}}</p>
