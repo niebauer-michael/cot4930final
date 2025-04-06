@@ -20,24 +20,15 @@ import requests
 from PIL import Image
 from dotenv import load_dotenv
 import google.generativeai as genai
+from google.cloud import secretmanager
 
 app = Flask(__name__)
 
-from google.cloud import secretmanager
 
-
-# get and assign api_key
 def access_secret(secret_name):
-    # Initialize the Secret Manager client
     client = secretmanager.SecretManagerServiceClient()
-    
-    # Define the secret version name with the project ID and secret name
     name = f"projects/cot4930-001/secrets/{secret_name}/versions/latest"
-    
-    # Access the secret version
     response = client.access_secret_version(name=name)
-    
-    # Decode and print the secret data
     secret_data = response.payload.data.decode("UTF-8")
     print(f"Secret data: {secret_data}")
     return secret_data
@@ -46,15 +37,6 @@ API_KEY = access_secret("API_KEY")
 #model = genai.GenerativeModel("gemini-1.5-flash", api_key=API_KEY)
 genai.configure(api_key=API_KEY)
 
-#load_dotenv()
-#API_KEY = os.getenv('API_KEY')
-#print(API_KEY)
-#genai.configure(api_key=API_KEY)  # Optionally, use a service account for authentication
-
-#def getAPIkey():
-#    load_dotenv()
-#    API_KEY = os.getenv('API_KEY')
-#    print(API_KEY)
 
 def getBucket():
     bucket = 'cot4930private'
@@ -132,7 +114,7 @@ def loadImagesFromCloudStorage():
     
 
 # Route for home page and form submission
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
 
     # get file names from cloud storage
@@ -146,23 +128,37 @@ def index():
     # a random number is generated for the name
     # the image gets saved to cloud storage
     # save title and caption in json format
-    if request.method == 'POST':
-        file = request.files['file']
-        randomName = randomNameGenerator()
-        saveImagesToCloudStorage(file, randomName)
-        json_data = getImageDescription(file)
-        saveJSONTOCloudStorage(randomName, json_data)
+    #if request.method == 'POST':
+    #    file = request.files['file']
+    #    randomName = randomNameGenerator()
+    #    saveImagesToCloudStorage(file, randomName)
+    #    json_data = getImageDescription(file)
+    #    saveJSONTOCloudStorage(randomName, json_data)
     return render_template('index.html', image_filenames=image_filenames, titles=titles, descriptions=descriptions,num = num)
     
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    randomName = randomNameGenerator()
+    file = request.files['file']
+    saveImagesToCloudStorage(file, randomName)
+    #KEY_API = getAPIkey()
+    #json_data =  getImageDescription(file, KEY_API)
+    json_data =  getImageDescription(file)
+    saveJSONTOCloudStorage(randomName, json_data)
+    return redirect(url_for('index'))
+
+
+
+
 # Serve images for html
-@app.route('/image/<image_filename>')
-def serve_image(image_filename):
-    bucket = getBucket()
-    blob = bucket.blob(image_filename)
+#@app.route('/image/<image_filename>')
+#def serve_image(image_filename):
+#    bucket = getBucket()
+#    blob = bucket.blob(image_filename)
     # Download the image as bytes
-    image_data = blob.download_as_bytes()
+#    image_data = blob.download_as_bytes()
     # Return the image with the appropriate content type
-    return Response(image_data, mimetype='image/jpeg')
+#    return Response(image_data, mimetype='image/jpeg')
 
 # main - main 
 if __name__ == '__main__':
