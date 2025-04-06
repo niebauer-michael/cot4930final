@@ -23,11 +23,33 @@ import google.generativeai as genai
 
 app = Flask(__name__)
 
+from google.cloud import secretmanager
 
-load_dotenv()
-API_KEY = os.getenv('API_KEY')
-print(API_KEY)
-genai.configure(api_key=API_KEY)  # Optionally, use a service account for authentication
+
+# get and assign api_key
+def access_secret(secret_name):
+    # Initialize the Secret Manager client
+    client = secretmanager.SecretManagerServiceClient()
+    
+    # Define the secret version name with the project ID and secret name
+    name = f"projects/cot4930-001/secrets/{secret_name}/versions/latest"
+    
+    # Access the secret version
+    response = client.access_secret_version(name=name)
+    
+    # Decode and print the secret data
+    secret_data = response.payload.data.decode("UTF-8")
+    print(f"Secret data: {secret_data}")
+    return secret_data
+
+API_KEY = access_secret("API_KEY")
+#model = genai.GenerativeModel("gemini-1.5-flash", api_key=API_KEY)
+genai.configure(api_key=API_KEY)
+
+#load_dotenv()
+#API_KEY = os.getenv('API_KEY')
+#print(API_KEY)
+#genai.configure(api_key=API_KEY)  # Optionally, use a service account for authentication
 
 def getAPIkey():
     load_dotenv()
