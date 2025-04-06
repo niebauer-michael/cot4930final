@@ -48,7 +48,7 @@ def getBucket():
 def randomNameGenerator():
     name_length = 6
     random_name = ''.join(random.choices(string.ascii_letters + string.digits, k=name_length))
-    print(random_name)
+    # print(random_name)
     return random_name
 
 def saveImagesToCloudStorage(file, randomName):
@@ -97,32 +97,6 @@ def getImageDescription(file):
 def loadImagesFromCloudStorage():
     bucket = getBucket()
     blobs = bucket.list_blobs()
-    image_urls = []
-    titles = []
-    descriptions = []
-    for blob in blobs:
-        # loop over blobs for image files
-        # store the url in a list
-        if blob.name.endswith(('.jpg', '.jpeg')):
-            image_urls.append(blob.public_url)
-        # loop over blobs for json files
-        # parse the json file for title and description   
-        if blob.name.endswith(('.json')):
-            json_data = blob.download_as_text()
-            data = json.loads(json_data)
-            titles.append(data.get('title'))
-            descriptions.append(data.get('description'))
-    return image_urls, titles, descriptions
-
-
-
-
-
-
-"""
-def loadImagesFromCloudStorage():
-    bucket = getBucket()
-    blobs = bucket.list_blobs()
     image_names = []
     titles = []
     descriptions = []
@@ -141,30 +115,17 @@ def loadImagesFromCloudStorage():
             titles.append(data.get('title'))
             descriptions.append(data.get('description'))
     return image_names,titles, descriptions
-"""
 
 # Route for home page and form submission
 @app.route('/')
 def index():
-
     # get file names from cloud storage
     image_filenames, titles, descriptions = loadImagesFromCloudStorage()
-    
-    # if no images pass 0 to the front
     num = len(image_filenames)
     if num is None:
         num = 0
-    # when the user submits an image
-    # a random number is generated for the name
-    # the image gets saved to cloud storage
-    # save title and caption in json format
-    #if request.method == 'POST':
-    #    file = request.files['file']
-    #    randomName = randomNameGenerator()
-    #    saveImagesToCloudStorage(file, randomName)
-    #    json_data = getImageDescription(file)
-    #    saveJSONTOCloudStorage(randomName, json_data)
-    return render_template('index.html', image_filenames=image_filenames, titles=titles, descriptions=descriptions,num = num)
+    #return render_template('index.html', image_urls=image_urls, image_filenames=image_filenames, titles=titles, descriptions=descriptions, length = length)
+    return render_template('index.html', image_filenames=image_filenames, titles=titles, descriptions=descriptions, num = num)
     
 @app.route('/upload', methods=['POST'])
 def upload_image():
@@ -178,18 +139,16 @@ def upload_image():
     return redirect(url_for('index'))
 
 
-
-
 # Serve images for html
-#@app.route('/image/<image_filename>')
-#def serve_image(image_filename):
-#    bucket = getBucket()
-#    blob = bucket.blob(image_filename)
+@app.route('/image/<image_filename>')
+def serve_image(image_filename):
+    bucket = getBucket()
+    blob = bucket.blob(image_filename)
     # Download the image as bytes
-#    image_data = blob.download_as_bytes()
+    image_data = blob.download_as_bytes()
     # Return the image with the appropriate content type
-#    return Response(image_data, mimetype='image/jpeg')
+    return Response(image_data, mimetype='image/jpeg')
 
-# main - main 
+# main - main
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
