@@ -1,16 +1,3 @@
-<!--
-# Michael Niebauer
-# COT 5930-007 COT 4930-001: Cloud Native Development
-# Project 3 - Implement change management to your application and 
-# create automation for deployment as well as automated testing. 
-# Upon completion 50% of your users should see a blue background, 
-# while the other 50% should see a green background on your front layer. 
-# Traffic should be split evenly and you should be able to run the 2
-#  versions of the application in parallel. Do not implement the split 
-# logic in your application.
-# 
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,44 +14,34 @@
     </script>
 </head>
 
-<body style="background-color:grey">
+<body style="background-color:grey;">
     <div>
+        <div class="container-sm">
+            <br><br><br>
+            <div class="mb-3">
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <h2> an·no·ta·tion</h2>
+                    <h6>let AI describe your images</h6>
+                    <button type="submit">Upload</button>
+                    <input type="file" id="file" name="file" accept="image/jpeg" accept="image/jpg" required><br><br>
+                </form>
+            </div>
 
-    <div class="container-sm">
-        <br><br><br>
-        <div class="mb-3">
-            <form action="/upload" method="POST" enctype="multipart/form-data">
-                <h2> an·no·ta·tion</h2>
-                <h6>let AI describe your images</h6>
-                <button type="submit">Upload</button>
-                <input type="file" id="file" name="file" accept="image/jpeg" accept="image/jpg" required><br><br>
-            </form>
-        </div>
-
-        {% if image_urls %}
-        <div>
-            {% for i in range(0, length) %}
                 <div>
-                   <!--  <img src="{{ image_urls[i] }}" alt="Image" style="max-width: 500px; margin-bottom: 20px;">-->
-                   <img src="{{ image_filename=image_filenames[i]}}" alt="Image" style="width: 300px;" onclick="openImageInNewWindow(this.src)">
-                </div>                
-                <div>
-                    <p class="h6">{{titles[i]}}</p>
+                    {% for i in range(0, num) %}
+                        <div class="image-container">
+                            <img src="{{ url_for('serve_image', image_filename=image_filenames[i]) }}" alt="Image" style="width: 300px;" onclick="openImageInNewWindow(this.src)">
+                            <p>{{titles[i]}}</p>
+                            <p>{{descriptions[i]}}</p>
+                            <hr>
+                            <br>
+                        </div>
+                    {% endfor %}
                 </div>
-                <div>
-                    <p class="h6">{{descriptions[i]}}</p>
-                    <br>
-                </div>
-            {% endfor %}
-        </div>
 
-    {% else %}
-        <p>no images updated...</p>
-    {% endif %}
+            </div>
+        </div>
     </div>
-
-</div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </body>
