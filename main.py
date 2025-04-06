@@ -51,10 +51,10 @@ genai.configure(api_key=API_KEY)
 #print(API_KEY)
 #genai.configure(api_key=API_KEY)  # Optionally, use a service account for authentication
 
-def getAPIkey():
-    load_dotenv()
-    API_KEY = os.getenv('API_KEY')
-    print(API_KEY)
+#def getAPIkey():
+#    load_dotenv()
+#    API_KEY = os.getenv('API_KEY')
+#    print(API_KEY)
 
 def getBucket():
     bucket = 'cot4930private'
