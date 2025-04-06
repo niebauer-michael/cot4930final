@@ -24,3 +24,5 @@ google-auth==2.38.0
 
 #https://pypi.org/project/google-auth / 
 pytest==6.2.5
+
+google-cloud-secret-manager==2.0.0

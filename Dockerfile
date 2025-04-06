@@ -5,6 +5,13 @@ FROM python:3.9-slim
 # Set Python to run in unbuffered mode
 ENV PYTHONUNBUFFERED=1
 
+# Set environment variables for secret keys during the build
+ARG API_KEY
+ENV API_KEY=$API_KEY
+
+# Install dependencies
+RUN pip install --no-cache-dir google-cloud-secret-manager
+
 # Set the working directory inside the container
 WORKDIR /app
 
