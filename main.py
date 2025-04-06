@@ -90,6 +90,38 @@ def getImageDescription(file):
     print(description)
     return description
 
+
+
+# load images stored in cloud bucket
+# load and parse the json files with title and description
+def loadImagesFromCloudStorage():
+    bucket = 'cot4930-001-bucket'
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket)
+    blobs = bucket.list_blobs()
+    image_urls = []
+    titles = []
+    descriptions = []
+    for blob in blobs:
+        # loop over blobs for image files
+        # store the url in a list
+        if blob.name.endswith(('.jpg', '.jpeg')):
+            image_urls.append(blob.public_url)
+        # loop over blobs for json files
+        # parse the json file for title and description   
+        if blob.name.endswith(('.json')):
+            json_data = blob.download_as_text()
+            data = json.loads(json_data)
+            titles.append(data.get('title'))
+            descriptions.append(data.get('description'))
+    return image_urls, titles, descriptions
+
+
+
+
+
+
+"""
 def loadImagesFromCloudStorage():
     bucket = getBucket()
     blobs = bucket.list_blobs()
@@ -111,7 +143,7 @@ def loadImagesFromCloudStorage():
             titles.append(data.get('title'))
             descriptions.append(data.get('description'))
     return image_names,titles, descriptions
-    
+"""
 
 # Route for home page and form submission
 @app.route('/')
