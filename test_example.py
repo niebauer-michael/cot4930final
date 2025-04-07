@@ -18,6 +18,7 @@ def test_access_secret_success(mock_access_secret_version_success):
     assert secret == 'mocked_secret_value'
     mock_access_secret_version_success.assert_called_once()  # Ensure the mock was called
 
+
 # Test case for retry error (e.g., timeout while accessing Secret Manager)
 @pytest.fixture
 def mock_access_secret_version_retry_error():
@@ -33,11 +34,13 @@ def test_access_secret_retry_error(mock_access_secret_version_retry_error):
 
 # Test case for metadata service error (e.g., service unavailable)
 @pytest.fixture
+
 def mock_access_secret_version_metadata_error():
     with mock.patch('google.cloud.secretmanager.SecretManagerServiceClient.access_secret_version') as mock_access_secret_version:
         # Simulate an error when accessing metadata service
         mock_access_secret_version.side_effect = Exception("Metadata service unavailable")
         yield mock_access_secret_version
+
 
 def test_access_secret_metadata_error(mock_access_secret_version_metadata_error):
     # Call the function and expect an exception
